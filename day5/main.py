@@ -1,10 +1,14 @@
 def skip_ahead_amount(opcode):
-  if opcode in [1, 2, 7, 8]:
-    return 4
-  elif opcode in [5, 6]:
-    return 0
-  else:
-    return 2
+  return {
+    1: 4,
+    2: 4,
+    3: 2,
+    4: 2,
+    5: 0,
+    6: 0,
+    7: 4,
+    8: 4
+  }[opcode]
 
 # Takes in an operation spec such as 1002
 # Returns [opcode, param1_mode, param2_mode, param3_mode]
