@@ -38,12 +38,14 @@ input_id = 5
 instruction_pointer = 0
 latest_output = 0
 
+# Get the first operation and it's parameter modes
 operation_spec = parse_operation_spec(intcode[instruction_pointer])
 
 while operation_spec[0] != 99:
   opcode = operation_spec[0]
-  param1_mode = operation_spec[1][0]
-  param2_mode = operation_spec[1][1]
+  parameter_modes = operation_spec[1]
+  param1_mode = parameter_modes[0]
+  param2_mode = parameter_modes[1]
 
   # Addition
   if opcode == 1:
