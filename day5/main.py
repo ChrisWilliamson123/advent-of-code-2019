@@ -1,5 +1,3 @@
-instruction_values_perm = [int(x) for x in open('input.txt', 'r').read().split(',')]
-
 def skip_ahead_amount(opcode):
   if opcode in [1, 2, 7, 8]:
     return 4
@@ -34,12 +32,11 @@ def op_add(intcode, value1, value2, dest):
 def op_mul(intcode, value1, value2, dest):
   intcode[dest] = value1 * value2
 
+intcode = [int(x) for x in open('input.txt', 'r').read().split(',')]
+
 input_id = 5
 instruction_pointer = 0
 latest_output = 0
-
-# Make a copy of the instructions
-intcode = instruction_values_perm[:]
 
 operation_spec = parse_operation_spec(intcode[instruction_pointer])
 
