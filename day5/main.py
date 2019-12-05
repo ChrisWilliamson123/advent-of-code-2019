@@ -38,7 +38,10 @@ def op_mul(intcode, value1, value2, dest):
 
 intcode = [int(x) for x in open('input.txt', 'r').read().split(',')]
 
-input_id = 5
+part_one = True
+
+input_id = 1 if part_one else 5
+
 instruction_pointer = 0
 latest_output = 0
 
