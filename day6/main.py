@@ -32,32 +32,34 @@ def traverse(root, current_depth):
       total_depth += traverse(child, current_depth + 1)
     return total_depth + current_depth + 1
 
+def part_one(orbital_map):
+  root = 'COM'
+  total = traverse(root, -1)
+  print(total)
+
+def part_two(orbital_map):
+  unvisited = get_vertices()
+  all_edges = get_edges()
+  distances = defaultdict(lambda:1000000)
+  dest = 'SAN'
+  current_node = 'YOU'
+  distances[current_node] = 0
+
+  while dest in unvisited:
+    neighbours = [e[1] for e in filter(lambda edge: edge[0] == current_node, all_edges)]
+    unvisited_neighbours = filter(lambda n: n in unvisited, neighbours)
+    for n in unvisited_neighbours:
+      neighbour_distance = distances[current_node] + 1
+      if neighbour_distance < distances[n]:
+        distances[n] = neighbour_distance
+    unvisited.remove(current_node)
+
+    current_node = min(unvisited, key=(lambda k: distances[k]))
+
+  print(distances[dest]-2)
+
 orbits = [x.rstrip() for x in open('input.txt', 'r').readlines()]
 orbital_map = build_orbital_map(orbits)
 
-root = 'COM'
-
-total = traverse(root, -1)
-print(total)
-
-unvisited = get_vertices()
-all_edges = get_edges()
-distances = defaultdict(lambda:1000000)
-dest = 'SAN'
-current_node = 'YOU'
-distances[current_node] = 0
-
-while dest in unvisited:
-  neighbours = [e[1] for e in filter(lambda edge: edge[0] == current_node, all_edges)]
-  unvisited_neighbours = filter(lambda n: n in unvisited, neighbours)
-  for n in unvisited_neighbours:
-    neighbour_distance = distances[current_node] + 1
-    if neighbour_distance < distances[n]:
-      distances[n] = neighbour_distance
-  unvisited.remove(current_node)
-
-  current_node = min(unvisited, key=(lambda k: distances[k]))
-
-print(distances[dest]-2)
-
-
+part_one(orbital_map)
+part_two(orbital_map)
