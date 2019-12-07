@@ -36,73 +36,75 @@ def op_add(intcode, value1, value2, dest):
 def op_mul(intcode, value1, value2, dest):
   intcode[dest] = value1 * value2
 
+def run_program(intcode, inputs):
+  instruction_pointer = 0
+  output = 0
+
+  # Get the first operation and it's parameter modes
+  operation_spec = parse_operation_spec(intcode[instruction_pointer])
+  while operation_spec[0] != 99:
+    opcode = operation_spec[0]
+    parameter_modes = operation_spec[1]
+    param1_mode = parameter_modes[0]
+    param2_mode = parameter_modes[1]
+
+    # Addition
+    if opcode == 1:
+      (value1, value2) = get_param_values(intcode, instruction_pointer, param1_mode, param2_mode)
+      destination_address = intcode[instruction_pointer+3]
+      op_add(intcode, value1, value2, destination_address)
+    # Multiplication
+    elif opcode == 2:
+      (value1, value2) = get_param_values(intcode, instruction_pointer, param1_mode, param2_mode)
+      destination_address = intcode[instruction_pointer+3]
+      op_mul(intcode, value1, value2, destination_address)
+    # Input
+    elif opcode == 3:
+      op_input(intcode, inputs[0], intcode[instruction_pointer+1])
+      inputs.pop(0)
+    # Output
+    elif opcode == 4:
+      if param1_mode == 1:
+        output = intcode[instruction_pointer+1]
+      else:
+        output = intcode[intcode[instruction_pointer+1]]
+    # Jump-if-true
+    elif opcode == 5:
+      (value1, value2) = get_param_values(intcode, instruction_pointer, param1_mode, param2_mode)
+      if value1 != 0:
+        instruction_pointer = value2
+      else:
+        instruction_pointer += 3
+    # Jump-if-false
+    elif opcode == 6:
+      (value1, value2) = get_param_values(intcode, instruction_pointer, param1_mode, param2_mode)
+      if value1 == 0:
+        instruction_pointer = value2
+      else:
+        instruction_pointer += 3
+    # Less than
+    elif opcode == 7:
+      (value1, value2) = get_param_values(intcode, instruction_pointer, param1_mode, param2_mode)
+      to_store = 0
+      if value1 < value2:
+        to_store = 1
+      intcode[intcode[instruction_pointer+3]] = to_store
+    # Equals
+    elif opcode == 8:
+      (value1, value2) = get_param_values(intcode, instruction_pointer, param1_mode, param2_mode)
+      to_store = 0
+      if value1 == value2:
+        to_store = 1
+      intcode[intcode[instruction_pointer+3]] = to_store
+
+    instruction_pointer += skip_ahead_amount(opcode)
+    operation_spec = parse_operation_spec(intcode[instruction_pointer])
+
+  return output
+
 intcode = [int(x) for x in open('input.txt', 'r').read().split(',')]
 
-part_one = True
+part_one = run_program(intcode[:], [1])
+part_two = run_program(intcode[:], [5])
 
-input_id = 1 if part_one else 5
-
-instruction_pointer = 0
-latest_output = 0
-
-# Get the first operation and it's parameter modes
-operation_spec = parse_operation_spec(intcode[instruction_pointer])
-
-while operation_spec[0] != 99:
-  opcode = operation_spec[0]
-  parameter_modes = operation_spec[1]
-  param1_mode = parameter_modes[0]
-  param2_mode = parameter_modes[1]
-
-  # Addition
-  if opcode == 1:
-    (value1, value2) = get_param_values(intcode, instruction_pointer, param1_mode, param2_mode)
-    destination_address = intcode[instruction_pointer+3]
-    op_add(intcode, value1, value2, destination_address)
-  # Multiplication
-  elif opcode == 2:
-    (value1, value2) = get_param_values(intcode, instruction_pointer, param1_mode, param2_mode)
-    destination_address = intcode[instruction_pointer+3]
-    op_mul(intcode, value1, value2, destination_address)
-  # Input
-  elif opcode == 3:
-    op_input(intcode, input_id, intcode[instruction_pointer+1])
-  # Output
-  elif opcode == 4:
-    if param1_mode == 1:
-      latest_output = intcode[instruction_pointer+1]
-    else:
-      latest_output = intcode[intcode[instruction_pointer+1]]
-  # Jump-if-true
-  elif opcode == 5:
-    (value1, value2) = get_param_values(intcode, instruction_pointer, param1_mode, param2_mode)
-    if value1 != 0:
-      instruction_pointer = value2
-    else:
-      instruction_pointer += 3
-  # Jump-if-false
-  elif opcode == 6:
-    (value1, value2) = get_param_values(intcode, instruction_pointer, param1_mode, param2_mode)
-    if value1 == 0:
-      instruction_pointer = value2
-    else:
-      instruction_pointer += 3
-  # Less than
-  elif opcode == 7:
-    (value1, value2) = get_param_values(intcode, instruction_pointer, param1_mode, param2_mode)
-    to_store = 0
-    if value1 < value2:
-      to_store = 1
-    intcode[intcode[instruction_pointer+3]] = to_store
-  # Equals
-  elif opcode == 8:
-    (value1, value2) = get_param_values(intcode, instruction_pointer, param1_mode, param2_mode)
-    to_store = 0
-    if value1 == value2:
-      to_store = 1
-    intcode[intcode[instruction_pointer+3]] = to_store
-
-  instruction_pointer += skip_ahead_amount(opcode)
-  operation_spec = parse_operation_spec(intcode[instruction_pointer])
-
-print(latest_output)
+print(part_one, part_two)
