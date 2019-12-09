@@ -11,7 +11,6 @@ class IntcodeComputer:
     self.memory = defaultdict(int)
     for i in range(len(intcode)):
       self.memory[i] = intcode[i]
-    # print(self.memory.values())
 
   # Takes in an operation spec such as 1002
   # Returns [opcode, param1_mode, param2_mode, param3_mode]
