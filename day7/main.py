@@ -105,21 +105,16 @@ def run_program(intcode, inputs):
   return output
 
 intcode = [int(x) for x in open('input.txt', 'r').read().split(',')]
-# intcode = [int(x) for x in open('test_input.txt', 'r').read().split(',')]
 
-# phase_permutations = list(permutations([0, 1, 2, 3, 4]))
+max_power_output = 0
+for phases in permutations([0, 1, 2, 3, 4]):
+  latest_amp_output = 0
+  for i in range(5):
+    latest_amp_output = run_program(intcode[:], [phases[i], latest_amp_output])
+  if latest_amp_output > max_power_output:
+    max_power_output = latest_amp_output
 
-# max_power_output = 0
-# phase_order = []
-# for phases in phase_permutations:
-#   latest_amp_output = 0
-#   for i in range(0, 5):
-#     latest_amp_output = run_program(intcode[:], [phases[i], latest_amp_output])
-#   if latest_amp_output > max_power_output:
-#     max_power_output = latest_amp_output
-#     phase_order = phases
-
-# print(max_power_output, phase_order)
+print(max_power_output)
 
 class Amplifier:
   def __init__(self, intcode, phase, first = False):
@@ -194,10 +189,8 @@ class Amplifier:
       operation_spec = parse_operation_spec(self.intcode[self.instruction_pointer])
     return -1
 
-phase_permutations = list(permutations([5,6,7,8,9]))
-
 max_power = 0
-for phases in phase_permutations:
+for phases in permutations([5,6,7,8,9]):
   amps = [
     Amplifier(intcode[:], phases[0], True),
     Amplifier(intcode[:], phases[1]),
@@ -208,11 +201,8 @@ for phases in phase_permutations:
   amp_index = 0
   count = 0
   while True:
-    # print(amp_index)
     current_amp = amps[amp_index]
-    # print('Running amp {0} with input {1} at inst pointer {2}'.format(amp_index, current_amp.inputs, current_amp.instruction_pointer))
     run_status_code = current_amp.run()
-    # print('Output: {0}'.format(current_amp.output))
     if run_status_code != -1:
       next_amp_index = amp_index + 1 if amp_index < len(amps) - 1 else 0
       amps[next_amp_index].inputs.append(current_amp.output)
