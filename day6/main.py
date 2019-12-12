@@ -37,6 +37,10 @@ def part_one(orbital_map):
   total = traverse(root, -1)
   print(total)
 
+def get_unvisited_neighbours(neighbours, unvisited):
+  for n in filter(lambda n: n in unvisited, neighbours):
+    yield n
+
 def part_two(orbital_map):
   unvisited = get_vertices()
   all_edges = get_edges()
@@ -47,7 +51,7 @@ def part_two(orbital_map):
 
   while dest in unvisited:
     neighbours = [e[1] for e in filter(lambda edge: edge[0] == current_node, all_edges)]
-    unvisited_neighbours = filter(lambda n: n in unvisited, neighbours)
+    unvisited_neighbours = get_unvisited_neighbours(neighbours, unvisited)
     for n in unvisited_neighbours:
       neighbour_distance = distances[current_node] + 1
       if neighbour_distance < distances[n]:

@@ -9,8 +9,9 @@ for wire in wires:
   wire_coords = []
 
   current_pos = (0,0)
-
-  for move in wire.split(','):
+  move_generator = (move for move in wire.split(','))
+  
+  for move in move_generator:
     direction = move[0]
     amount = int(move[1:])
 
