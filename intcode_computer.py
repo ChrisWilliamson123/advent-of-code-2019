@@ -69,8 +69,8 @@ class IntcodeComputer:
   def op_add(self, addr1, addr2, result_addr):
     self.memory[result_addr] = self.memory[addr1] + self.memory[addr2]
 
-  def op_mul(self, value1, value2, destination_address):
-    self.memory[destination_address] = value1 * value2
+  def op_mul(self, addr1, addr2, result_addr):
+    self.memory[result_addr] = self.memory[addr1] * self.memory[addr2]
 
   def op_input(self, mode):
     if mode == 2:
@@ -103,9 +103,9 @@ class IntcodeComputer:
     addresses = self.get_addresses_from_parameter_modes([param1_mode, param2_mode, param3_mode])
 
     if opcode == 1:
-      self.op_add(addresses[0], addresses[1], self.get_result_addr(param3_mode, self.memory[self.ip+3]))
+      self.op_add(addresses[0], addresses[1], addresses[2])
     elif opcode == 2:
-      self.op_mul(values[0], values[1], self.get_result_addr(param3_mode, self.memory[self.ip+3]))
+      self.op_mul(addresses[0], addresses[1], addresses[2])
     elif opcode == 3:
       self.op_input(param1_mode)
     elif opcode == 4:
