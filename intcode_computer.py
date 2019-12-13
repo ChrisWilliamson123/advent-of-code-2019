@@ -8,6 +8,7 @@ class IntcodeComputer:
 
     self.inputs = inputs
     self.outputs = []
+    self.outputs_changed = False
 
     self.ip = 0
     self.relative_base = 0
