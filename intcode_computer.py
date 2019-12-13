@@ -20,6 +20,21 @@ class IntcodeComputer:
     param_modes =  [(spec//100)%10, (spec//1000)%10, (spec//10000)%10]
     return (opcode, param_modes)
 
+  def get_addresses_from_parameter_modes(self, modes):
+    addresses = []
+    for i in range(1, len(modes)+1):
+      parameter_location = self.ip + i
+      # RELATIVE
+      if modes[i-1] == 2:
+        addresses.append(self.relative_base + self.memory[parameter_location])
+      # IMMEDIATE
+      elif modes[i-1] == 1:
+        addresses.append(parameter_location)
+      # POSTION
+      else:
+        addresses.append(self.memory[parameter_location])
+    return addresses
+
   # Returns: list [value1, value2]
   # Will only return two values if operation needs both
   def get_param_values(self, opcode, modes):
@@ -46,13 +61,13 @@ class IntcodeComputer:
       9: 2
     }[opcode]
 
-  def get_dest_addr(self, mode, value):
+  def get_result_addr(self, mode, value):
     if mode == 2:
       return self.relative_base + value
     return value
 
-  def op_add(self, value1, value2, destination_address):
-    self.memory[destination_address] = value1 + value2
+  def op_add(self, addr1, addr2, result_addr):
+    self.memory[result_addr] = self.memory[addr1] + self.memory[addr2]
 
   def op_mul(self, value1, value2, destination_address):
     self.memory[destination_address] = value1 * value2
@@ -85,11 +100,12 @@ class IntcodeComputer:
       return
       
     values = self.get_param_values(opcode, [param1_mode, param2_mode, param3_mode])
+    addresses = self.get_addresses_from_parameter_modes([param1_mode, param2_mode, param3_mode])
 
     if opcode == 1:
-      self.op_add(values[0], values[1], self.get_dest_addr(param3_mode, self.memory[self.ip+3]))
+      self.op_add(addresses[0], addresses[1], self.get_result_addr(param3_mode, self.memory[self.ip+3]))
     elif opcode == 2:
-      self.op_mul(values[0], values[1], self.get_dest_addr(param3_mode, self.memory[self.ip+3]))
+      self.op_mul(values[0], values[1], self.get_result_addr(param3_mode, self.memory[self.ip+3]))
     elif opcode == 3:
       self.op_input(param1_mode)
     elif opcode == 4:
@@ -100,9 +116,9 @@ class IntcodeComputer:
     elif opcode == 6:
       self.op_jif(values[0], values[1])
     elif opcode == 7:
-      self.op_lt(values[0], values[1], self.get_dest_addr(param3_mode, self.memory[self.ip+3]))
+      self.op_lt(values[0], values[1], self.get_result_addr(param3_mode, self.memory[self.ip+3]))
     elif opcode == 8:
-      self.op_eq(values[0], values[1], self.get_dest_addr(param3_mode, self.memory[self.ip+3]))
+      self.op_eq(values[0], values[1], self.get_result_addr(param3_mode, self.memory[self.ip+3]))
     elif opcode == 9:
       param = self.memory[self.ip+1]
       if param1_mode == 2:
