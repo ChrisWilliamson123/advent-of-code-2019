@@ -3,31 +3,21 @@ from itertools import cycle
 
 class IntcodeComputer:
   def __init__(self, intcode, inputs):
-    self.intcode = intcode
-    self.inputs = inputs
-    self.ip = 0
-    self.outputs = []
-    self.relative_base = 0
-    self.halted = False
     self.memory = defaultdict(int)
     for i in range(len(intcode)):
       self.memory[i] = intcode[i]
-    
-    
-    self.joystick_position = 0
-    self.score = 0
 
+    self.inputs = inputs
+    self.outputs = []
 
-  # Takes in an operation spec such as 1002
-  # Returns [opcode, param1_mode, param2_mode, param3_mode]
-  # E.g. 1002 -> (2, [0, 1, 0])
+    self.ip = 0
+    self.relative_base = 0
+    
+    self.halted = False
+
   def parse_operation_spec(self, spec):
-    as_string = str(spec)
-    opcode = int(as_string[-2:])
-    param_modes = map(lambda x: int(x), list(as_string[0:-2])[::-1])
-    while len(param_modes) < 3:
-      param_modes.append(0)
-
+    opcode = int(str(spec)[-2:]) 
+    param_modes =  [(spec//100)%10, (spec//1000)%10, (spec//10000)%10]
     return (opcode, param_modes)
 
   # Returns: list [value1, value2]
@@ -67,8 +57,12 @@ class IntcodeComputer:
   def op_mul(self, value1, value2, destination_address):
     self.memory[destination_address] = value1 * value2
 
-  # def op_input(self, destination_address):
-  #   self.memory[destination_address] = self.joystick_position
+  def op_input(self, mode):
+    if mode == 2:
+      input_address = self.memory[self.ip+1] + self.relative_base
+    else:
+      input_address = self.memory[self.ip+1]
+    self.memory[input_address] = self.inputs.pop()
 
   def op_jit(self, value1, value2):
     self.ip = value2 if value1 != 0 else self.ip + 3
@@ -97,11 +91,7 @@ class IntcodeComputer:
     elif opcode == 2:
       self.op_mul(values[0], values[1], self.get_dest_addr(param3_mode, self.memory[self.ip+3]))
     elif opcode == 3:
-      if param1_mode == 2:
-        input_address = self.memory[self.ip+1] + self.relative_base
-      else:
-        input_address = self.memory[self.ip+1]
-      self.memory[input_address] = self.joystick_position
+      self.op_input(param1_mode)
     elif opcode == 4:
       output_value = values[0]
       self.outputs.append(output_value)
@@ -124,7 +114,3 @@ class IntcodeComputer:
       self.relative_base += change
 
     self.ip += self.skip_ahead_amount(opcode)
-
-  def run_program(self):
-    while not self.halted:
-      self.perform_next_operation()

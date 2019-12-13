@@ -1,11 +1,15 @@
+import sys
+sys.path.append('..')
+
 from intcode_computer import IntcodeComputer
 
-intcode = map(int, open('input.txt', 'r').read().split(','))
+intcode = [int(x) for x in open('input.txt', 'r').read().split(',')]
 computer = IntcodeComputer(intcode[:], [])
-computer.run_program()
+while not computer.halted:
+  computer.perform_next_operation()
 outputs = computer.outputs
 grouped_outputs = [outputs[i:i+3] for i in range(0, len(outputs), 3)]
-blocks = filter(lambda o: o[2] == 2, grouped_outputs)
+blocks = [o for o in grouped_outputs if o[2] == 2] 
 part_one = len(blocks)
 print(part_one)
 
@@ -26,7 +30,7 @@ while not computer.halted:
     elif tile_type == 4:
       ball_position = (x, y)
       difference = ball_position[0] - paddle_position[0]
-      computer.joystick_position = -1 if difference < 0 else 1 if difference > 0 else 0
+      computer.inputs.append(-1 if difference < 0 else 1 if difference > 0 else 0)
     elif x == -1 and y == 0:
       score = tile_type
 
