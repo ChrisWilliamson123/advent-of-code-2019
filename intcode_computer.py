@@ -72,18 +72,17 @@ class IntcodeComputer:
   def op_mul(self, addr1, addr2, result_addr):
     self.memory[result_addr] = self.memory[addr1] * self.memory[addr2]
 
-  def op_input(self, mode):
-    if mode == 2:
-      input_address = self.memory[self.ip+1] + self.relative_base
-    else:
-      input_address = self.memory[self.ip+1]
-    self.memory[input_address] = self.inputs.pop()
+  def op_input(self, result_addr):
+    self.memory[result_addr] = self.inputs.pop()
 
-  def op_jit(self, value1, value2):
-    self.ip = value2 if value1 != 0 else self.ip + 3
+  def op_output(self, addr1):
+    self.outputs.append(self.memory[addr1])
 
-  def op_jif(self, value1, value2):
-    self.ip = value2 if value1 == 0 else self.ip + 3
+  def op_jit(self, addr1, addr2):
+    self.ip = self.memory[addr2] if self.memory[addr1] != 0 else self.ip + 3
+
+  def op_jif(self, addr1, addr2):
+    self.ip = self.memory[addr2] if self.memory[addr1] == 0 else self.ip + 3
 
   def op_lt(self, value1, value2, destination_address):
     self.memory[destination_address] = 1 if value1 < value2 else 0
@@ -107,14 +106,13 @@ class IntcodeComputer:
     elif opcode == 2:
       self.op_mul(addresses[0], addresses[1], addresses[2])
     elif opcode == 3:
-      self.op_input(param1_mode)
+      self.op_input(addresses[0])
     elif opcode == 4:
-      output_value = values[0]
-      self.outputs.append(output_value)
+      self.op_output(addresses[0])
     elif opcode == 5:
-      self.op_jit(values[0], values[1])
+      self.op_jit(addresses[0], addresses[1])
     elif opcode == 6:
-      self.op_jif(values[0], values[1])
+      self.op_jif(addresses[0], addresses[1])
     elif opcode == 7:
       self.op_lt(values[0], values[1], self.get_result_addr(param3_mode, self.memory[self.ip+3]))
     elif opcode == 8:
