@@ -44,6 +44,10 @@ class IntcodeComputer:
 
     self.ip += self.skip_ahead_amount(opcode)
 
+  def run_until_halted(self):
+    while not self.halted:
+      self.perform_next_operation()
+
   def parse_operation_spec(self, spec):
     opcode = int(str(spec)[-2:]) 
     param_modes =  [(spec//100)%10, (spec//1000)%10, (spec//10000)%10]
