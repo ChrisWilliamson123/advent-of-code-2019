@@ -1,5 +1,4 @@
 from collections import defaultdict
-from itertools import cycle
 
 class IntcodeComputer:
   def __init__(self, intcode, inputs):
