@@ -84,11 +84,11 @@ class IntcodeComputer:
   def op_jif(self, addr1, addr2):
     self.ip = self.memory[addr2] if self.memory[addr1] == 0 else self.ip + 3
 
-  def op_lt(self, value1, value2, destination_address):
-    self.memory[destination_address] = 1 if value1 < value2 else 0
+  def op_lt(self, addr1, addr2, result_addr):
+    self.memory[result_addr] = 1 if self.memory[addr1] < self.memory[addr2] else 0
 
-  def op_eq(self, value1, value2, destination_address):
-    self.memory[destination_address] = 1 if value1 == value2 else 0
+  def op_eq(self, addr1, addr2, result_addr):
+    self.memory[result_addr] = 1 if self.memory[addr1] == self.memory[addr2] else 0
 
   def perform_next_operation(self):
     # Get the operation specification
@@ -114,9 +114,9 @@ class IntcodeComputer:
     elif opcode == 6:
       self.op_jif(addresses[0], addresses[1])
     elif opcode == 7:
-      self.op_lt(values[0], values[1], self.get_result_addr(param3_mode, self.memory[self.ip+3]))
+      self.op_lt(addresses[0], addresses[1], addresses[2])
     elif opcode == 8:
-      self.op_eq(values[0], values[1], self.get_result_addr(param3_mode, self.memory[self.ip+3]))
+      self.op_eq(addresses[0], addresses[1], addresses[2])
     elif opcode == 9:
       param = self.memory[self.ip+1]
       if param1_mode == 2:
