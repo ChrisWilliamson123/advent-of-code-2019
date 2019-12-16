@@ -1,12 +1,8 @@
 from itertools import islice, chain, cycle
 
 input = [int(x) for x in open('input.txt', 'r').read()]
-# input = [int(x) for x in open('test_input.txt', 'r').read()]
-
-# print(input)
 
 repeating_pattern_base = [0, 1, 0, -1]
-# current_pattern = (input[:])
 current_pattern = (input[:] * 10000)
 
 phases = 100
