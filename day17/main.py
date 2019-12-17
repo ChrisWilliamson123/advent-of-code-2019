@@ -20,7 +20,6 @@ while not computer.halted:
   computer.perform_next_operation()
   if computer.outputs != current_outputs:
     latest_output_code = computer.outputs[-1]
-    #print(latest_output_code)
     if latest_output_code == 10:
       output_pos = (0, output_pos[1]+1)
     else:
