@@ -16,7 +16,7 @@ def get_visible_pixel(position, layers):
     if layer[position] != '2':
       return layer[position]
 
-final_image = map(lambda pos: get_visible_pixel(pos, layers), range(layer_size))
+final_image = [get_visible_pixel(pos, layers) for pos in range(layer_size)]
 final_image_in_rows = [final_image[x:x+image_width] for x in range(0, len(final_image), image_width)]
 
 def print_image(image):

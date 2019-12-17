@@ -1,8 +1,6 @@
-import re, pprint, math
+import re, math
 from collections import Counter, defaultdict
 from itertools import chain
-
-pp = pprint.PrettyPrinter(indent=2)
 
 # Map of element to ingredients (10, A): [(10, ORE)]
 elements = defaultdict(list)
@@ -11,8 +9,6 @@ for line in open('input.txt', 'r').readlines():
   element = re.findall('(\d+) (\w+)', split[1])[0]
   ingredients = [re.findall('(\d+) (\w+)', i)[0] for i in split[0].split(',')]
   elements[element] = ingredients
-
-pp.pprint(elements)
 
 def get_raw_amounts(element, amount, elements_needed, leftovers):
   valid_leftovers = filter(lambda e: e[1] == element, leftovers)

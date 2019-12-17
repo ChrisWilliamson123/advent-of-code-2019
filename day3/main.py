@@ -16,16 +16,16 @@ for wire in wires:
     amount = int(move[1:])
 
     if direction == 'U':
-      for x in xrange(1, amount+1):
+      for x in range(1, amount+1):
         wire_coords.append((current_pos[0], current_pos[1] + x))
     elif direction == 'D':
-      for x in xrange(1, amount+1):
+      for x in range(1, amount+1):
         wire_coords.append((current_pos[0], current_pos[1] - x))
     elif direction == 'L':
-      for x in xrange(1, amount+1):
+      for x in range(1, amount+1):
         wire_coords.append((current_pos[0] - x, current_pos[1]))
     else:
-      for x in xrange(1, amount+1):
+      for x in range(1, amount+1):
         wire_coords.append((current_pos[0] + x, current_pos[1]))
 
     current_pos = wire_coords[-1]
